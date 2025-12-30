@@ -132,7 +132,7 @@ object PixelOperations {
         return output
     }
 
-    // Escala de Grises: Convierte la imagen a escala de grises usando el método seleccionado.
+    // Escala de Grises: Convierte la imagen a escala de grises usando el modo seleccionado.
     fun toGrayscale(source: Image, method: GrayscaleMethod): Image {
         val width = source.width.toInt()
         val height = source.height.toInt()

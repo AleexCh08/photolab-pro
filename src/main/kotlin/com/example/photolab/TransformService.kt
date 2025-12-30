@@ -14,7 +14,7 @@ object TransformService {
     }
 
     // Sección: ESCALADO Y ZOOM
-    // Escala la imagen usando el factor y método especificados.
+    // Escala la imagen usando el factor y modo especificados.
     fun scaleImage(source: Image, scaleFactor: Double, method: InterpolationMethod): Image {
         val sourceWidth = source.width.toInt()
         val sourceHeight = source.height.toInt()
@@ -98,7 +98,7 @@ object TransformService {
         return output
     }
 
-    // Espejo Vertical. y' = height - 1 - y
+    // Espejo Vertical. Y' = height - 1 - y
     fun flipVertical(source: Image): Image {
         val w = source.width.toInt()
         val h = source.height.toInt()
