@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane prefHeight="768.0" prefWidth="1280.0" style="-fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.photolab.MainController">
+    <top>
+        <StackPane style="-fx-background-color: #383838; -fx-border-color: #2b2b2b; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
+
+            <MenuBar StackPane.alignment="CENTER_LEFT" style="-fx-background-color: transparent; -fx-padding: 0; -fx-font-size: 12px;">
+                <Menu mnemonicParsing="false">
+                    <graphic><Label alignment="CENTER" style="-fx-text-fill: white;" text="Archivo" /></graphic>
+                    <MenuItem accelerator="Shortcut+O" mnemonicParsing="false" onAction="#onOpenClick" text="Abrir imagen..." />
+                    <MenuItem accelerator="Shortcut+S" mnemonicParsing="false" onAction="#onSaveClick" text="Guardar imagen..." />
+                    <MenuItem accelerator="Shortcut+W" mnemonicParsing="false" onAction="#onCloseImageClick" text="Cerrar imagen" />
+                    <SeparatorMenuItem />
+                    <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#onExitClick" text="Salir" />
+                </Menu>
+                <Menu mnemonicParsing="false">
+                    <graphic><Label alignment="CENTER" style="-fx-text-fill: white;" text="Ver" /></graphic>
+                    <CheckMenuItem fx:id="menuHistogram" mnemonicParsing="false" onAction="#onToggleHistogram" text="Histograma" />
+                    <CheckMenuItem fx:id="menuTonalCurve" mnemonicParsing="false" onAction="#onToggleTonalCurve" text="Curva Tonal" />
+                    <CheckMenuItem fx:id="menuThreshold" mnemonicParsing="false" onAction="#onToggleThreshold" text="Umbralización" />
+                    <SeparatorMenuItem />
+                    <CheckMenuItem fx:id="menuZoomPanel" mnemonicParsing="false" onAction="#onToggleZoomPanel" text="Panel de Zoom" />
+                    <CheckMenuItem fx:id="menuLineProfile" mnemonicParsing="false" onAction="#onToggleLineProfile" text="Perfil de Línea" />
+                    <SeparatorMenuItem />
+                    <CheckMenuItem fx:id="menuHistory" mnemonicParsing="false" onAction="#onToggleHistory" text="Historial de Cambios" />
+                </Menu>
+                <Menu mnemonicParsing="false">
+                    <graphic><Label alignment="CENTER" style="-fx-text-fill: white;" text="Imagen" /></graphic>
+                    <Menu mnemonicParsing="false" text="Geometría y Recorte">
+                        <MenuItem mnemonicParsing="false" onAction="#onRotate180Click" text="Rotar 180°" />
+                        <MenuItem mnemonicParsing="false" onAction="#onRotate90RightClick" text="90° a la derecha" />
+                        <MenuItem mnemonicParsing="false" onAction="#onRotate90LeftClick" text="90° a la izquierda" />
+                        <SeparatorMenuItem />
+                        <MenuItem mnemonicParsing="false" onAction="#onFlipHorizontalClick" text="Voltear horizontal" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFlipVerticalClick" text="Voltear vertical" />
+                        <SeparatorMenuItem />
+                        <MenuItem mnemonicParsing="false" onAction="#onToggleCropMode" text="Recortar Imagen" />
+                    </Menu>
+                    <SeparatorMenuItem />
+                    <Menu mnemonicParsing="false" text="Escala de Grises">
+                        <MenuItem mnemonicParsing="false" onAction="#onGrayscaleAvgClick" text="Promedio" />
+                        <MenuItem mnemonicParsing="false" onAction="#onGrayscaleLumaClick" text="Luma (Preciso)" />
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Colorear / Teñir">
+                        <MenuItem mnemonicParsing="false" onAction="#onColorTintClick" text="Escala Monocromática" />
+                        <SeparatorMenuItem />
+                        <MenuItem mnemonicParsing="false" onAction="#onColorMultiplyClick" text="Oscurecer" />
+                        <MenuItem mnemonicParsing="false" onAction="#onColorAddClick" text="Aclarar" />
+                    </Menu>
+                    <SeparatorMenuItem />
+                    <Menu mnemonicParsing="false" text="Otros Filtros">
+                        <MenuItem mnemonicParsing="false" onAction="#onNegativeClick" text="Negativo (Invertir)" />
+                    </Menu>
+                    <SeparatorMenuItem />
+                    <MenuItem fx:id="menuUndo" accelerator="Shortcut+Z" disable="true" mnemonicParsing="false" onAction="#onUndoClick" text="Deshacer" />
+                    <MenuItem fx:id="menuResetImage" accelerator="Shortcut+R" disable="true" mnemonicParsing="false" onAction="#onResetImageClick" text="Reiniciar Imagen" />
+                </Menu>
+                <Menu mnemonicParsing="false">
+                    <graphic><Label alignment="CENTER" style="-fx-text-fill: white;" text="Filtros" /></graphic>
+                    <Menu mnemonicParsing="false" text="Suavizado">
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterAverageClick" text="Suavizar (Media)" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterMedianClick" text="Eliminar Ruido (Mediana)" />
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Bordes">
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterSobelClick" text="Contornos Básicos (Sobel)" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterScharrClick" text="Contornos Precisos (Scharr)" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterRobertsClick" text="Contornos Finos (Roberts)" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterPrewittClick" text="Contornos Estructurados (Prewitt)" />
+                        <SeparatorMenuItem />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterLoGClick" text="Realzar Bordes (LoG)" />
+                        <MenuItem mnemonicParsing="false" onAction="#onFilterSharpenClick" text="Perfilado (Sharpening)" />
+                    </Menu>
+                    <Menu mnemonicParsing="false" text="Ruido">
+                        <MenuItem mnemonicParsing="false" onAction="#onNoiseSaltPepperClick" text="Sal y Pimienta" />
+                        <MenuItem mnemonicParsing="false" onAction="#onNoiseGaussianClick" text="Gaussiano (Aditivo)" />
+                    </Menu>
+                </Menu>
+                <Menu mnemonicParsing="false">
+                    <graphic><Label alignment="CENTER" style="-fx-text-fill: white;" text="Avanzado" /></graphic>
+                    <MenuItem mnemonicParsing="false" onAction="#onCustomFilterClick" text="Filtro Personalizado..." />
+                </Menu>
+            </MenuBar>
+
+            <Button fx:id="btnCompare" text="Comparar" visible="false" StackPane.alignment="CENTER" style="-fx-background-color: #505050; -fx-text-fill: white; -fx-background-radius: 20; -fx-border-color: #666666; -fx-border-radius: 20; -fx-cursor: hand; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 4 20 4 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1);" />
+        </StackPane>
+    </top>
+
+    <left>
+        <VBox fx:id="historyPanel" managed="false" prefWidth="220.0" spacing="10.0" style="-fx-background-color: #333333; -fx-border-color: #2b2b2b; -fx-border-width: 0 1 0 0;" visible="false" BorderPane.alignment="CENTER">
+            <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+
+            <Label text="HISTORIAL" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+
+            <ListView fx:id="listHistory" style="-fx-background-color: #2b2b2b; -fx-background-insets: 0; -fx-control-inner-background: #2b2b2b;" VBox.vgrow="ALWAYS" />
+
+            <Button fx:id="btnRestoreHistory" onAction="#onRestoreHistoryClick" maxWidth="Infinity" style="-fx-background-color: #505050; -fx-text-fill: white; -fx-cursor: hand;" text="Restaurar Seleccionado" />
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" pannable="true" style="-fx-background-color: #1e1e1e; -fx-background: #1e1e1e; -fx-border-color: transparent;" BorderPane.alignment="CENTER">
+            <StackPane fx:id="imageStackPane" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #1e1e1e;">
+                <ImageView fx:id="mainImageView" onMouseClicked="#onMainImageClick" pickOnBounds="true" preserveRatio="true" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);" />
+                <Canvas fx:id="overlayCanvas" mouseTransparent="true" />
+            </StackPane>
+        </ScrollPane>
+    </center>
+
+    <right>
+        <VBox fx:id="rightPanel" managed="false" prefHeight="600.0" prefWidth="400.0" spacing="15.0" style="-fx-background-color: #4a4a4a; -fx-border-color: #2b2b2b; -fx-border-width: 0 0 0 1;" visible="false" BorderPane.alignment="CENTER">
+            <padding><Insets bottom="15.0" left="15.0" right="15.0" top="15.0" /></padding>
+
+            <HBox alignment="TOP_RIGHT">
+                <Button onAction="#onCloseRightPanelClick" style="-fx-background-color: transparent; -fx-text-fill: #999999; -fx-font-size: 12px; -fx-cursor: hand; -fx-font-weight: bold; " text="X" />
+            </HBox>
+
+            <VBox fx:id="histogramContainer" managed="false" visible="false" VBox.vgrow="NEVER">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label text="HISTOGRAMA" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label text="Canal:" textFill="#aaaaaa" />
+                    <ComboBox fx:id="comboHistogramChannel" style="-fx-font-size: 10px; -fx-background-color: #2b2b2b; -fx-text-base-color: white;" />
+                    <VBox.margin><Insets bottom="5.0" left="5.0" right="5.0" /></VBox.margin>
+                </HBox>
+                <AreaChart fx:id="histogramChart" prefHeight="200.0" alternativeRowFillVisible="false" createSymbols="false" horizontalGridLinesVisible="false" horizontalZeroLineVisible="false" legendVisible="false" style="-fx-background-color: transparent; -fx-padding: 0;" verticalGridLinesVisible="false" verticalZeroLineVisible="false" VBox.vgrow="NEVER">
+                    <xAxis><NumberAxis autoRanging="false" minorTickVisible="false" side="BOTTOM" tickLabelsVisible="false" tickMarkVisible="false" upperBound="255" /></xAxis>
+                    <yAxis><NumberAxis minorTickVisible="false" side="LEFT" tickLabelsVisible="false" tickMarkVisible="false" /></yAxis>
+                    <VBox.margin><Insets left="-10" right="-10"/></VBox.margin>
+                </AreaChart>
+            </VBox>
+
+            <VBox fx:id="tonalCurveContainer" managed="false" spacing="10.0" visible="false" VBox.vgrow="NEVER">
+                <Label text="CURVA TONAL" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+                <LineChart fx:id="tonalCurveChart" prefHeight="200.0" alternativeRowFillVisible="false" createSymbols="false" legendVisible="false" style="-fx-background-color: transparent;" VBox.vgrow="NEVER">
+                    <xAxis><NumberAxis autoRanging="false" side="BOTTOM" style="-fx-tick-label-fill: #aaaaaa; -fx-text-fill: #aaaaaa;" tickUnit="64" upperBound="255" /></xAxis>
+                    <yAxis><NumberAxis autoRanging="false" side="LEFT" style="-fx-tick-label-fill: #aaaaaa; -fx-text-fill: #aaaaaa;" tickUnit="64" upperBound="255" /></yAxis>
+                    <VBox.margin><Insets left="-10" right="-10"/></VBox.margin>
+                </LineChart>
+
+                <VBox spacing="10.0" style="-fx-background-color: #535353; -fx-padding: 10; -fx-background-radius: 4; -fx-border-color: #333333; -fx-border-radius: 4;">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="65.0" text="Brillo" textFill="#cccccc" />
+                        <Slider fx:id="sliderBrightness" blockIncrement="0.1" max="1.0" min="-1.0" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtBrightness" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="0.00" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="65.0" text="Contraste" textFill="#cccccc" />
+                        <Slider fx:id="sliderContrast" blockIncrement="0.1" max="2.0" value="1.0" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtContrast" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="1.00" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="65.0" text="Saturación" textFill="#cccccc" />
+                        <Slider fx:id="sliderSaturation" blockIncrement="0.1" max="3.0" value="1.0" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtSaturation" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="1.00" />
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="65.0" text="Gamma" textFill="#cccccc" />
+                        <Slider fx:id="sliderGamma" blockIncrement="0.1" max="3.0" min="0.1" value="1.0" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtGamma" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="1.00" />
+                    </HBox>
+
+                    <HBox alignment="CENTER" spacing="10.0">
+                        <Button onAction="#onApplyBrightnessContrast" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-size: 10px; -fx-cursor: hand; -fx-font-weight: bold;" text="Aplicar" />
+                        <Button onAction="#onResetBrightnessContrast" style="-fx-background-color: #666666; -fx-text-fill: white; -fx-font-size: 10px; -fx-cursor: hand;" text="Reiniciar" />
+                    </HBox>
+                    <VBox.margin><Insets top="-10"/></VBox.margin>
+                </VBox>
+            </VBox>
+
+            <VBox fx:id="lineProfileContainer" managed="false" spacing="10.0" visible="false" VBox.vgrow="NEVER">
+                <Label text="PERFIL DE LÍNEA (FILA)" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+                <Label text="Haz clic en la imagen para seleccionar una fila." textFill="#aaaaaa" wrapText="true"><font><Font size="10.0" /></font></Label>
+
+                <LineChart fx:id="lineProfileChart" prefHeight="300.0" alternativeRowFillVisible="false" createSymbols="false" legendVisible="false" style="-fx-background-color: transparent; -fx-padding: 0;" VBox.vgrow="NEVER">
+                    <xAxis><NumberAxis side="BOTTOM" style="-fx-tick-label-fill: #aaaaaa; -fx-text-fill: #aaaaaa;" /></xAxis>
+                    <yAxis><NumberAxis side="LEFT" style="-fx-tick-label-fill: #aaaaaa; -fx-text-fill: #aaaaaa;" /></yAxis>
+                    <VBox.margin><Insets top="-10" left="-10" right="-10"/></VBox.margin>
+                </LineChart>
+                <HBox alignment="CENTER">
+                    <Button onAction="#onClearLineProfileClick" style="-fx-background-color: #666666; -fx-text-fill: white; -fx-font-size: 10px; -fx-cursor: hand;" text="Deseleccionar fila" />
+                    <VBox.margin><Insets top="-10"/></VBox.margin>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="thresholdContainer" managed="false" spacing="8.0" style="-fx-background-color: #535353; -fx-padding: 10; -fx-background-radius: 4; -fx-border-color: #333333; -fx-border-radius: 4;" visible="false" VBox.vgrow="NEVER">
+                <Label text="UMBRALIZACIÓN" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+                <CheckBox fx:id="chkApplyThreshold" mnemonicParsing="false" selected="true" style="-fx-text-fill: #cccccc;" text="Activar Filtro">
+                    <VBox.margin><Insets bottom="5.0" top="5.0" /></VBox.margin>
+                </CheckBox>
+                <ComboBox fx:id="comboThresholdType" maxWidth="Infinity" style="-fx-background-color: #2b2b2b; -fx-mark-color: gray; -fx-text-base-color: white;" />
+                <StackPane>
+                    <VBox fx:id="boxSingleThreshold" spacing="8.0">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label prefWidth="50.0" text="Valor" textFill="#cccccc" />
+                            <Slider fx:id="sliderThresholdSingle" blockIncrement="1.0" max="255.0" value="128.0" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="txtThresholdSingle" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="128" />
+                        </HBox>
+                    </VBox>
+                    <VBox fx:id="boxRangeThreshold" spacing="8.0" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label prefWidth="40.0" text="Mín" textFill="#cccccc" />
+                            <Slider fx:id="sliderThresholdMin" blockIncrement="1.0" max="255.0" value="64.0" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="txtThresholdMin" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="64" />
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label prefWidth="40.0" text="Máx" textFill="#cccccc" />
+                            <Slider fx:id="sliderThresholdMax" blockIncrement="1.0" max="255.0" value="192.0" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="txtThresholdMax" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="192" />
+                        </HBox>
+                    </VBox>
+                </StackPane>
+            </VBox>
+
+            <VBox fx:id="cropContainer" managed="false" spacing="10.0" style="-fx-background-color: #535353; -fx-padding: 10; -fx-background-radius: 4; -fx-border-color: #333333; -fx-border-radius: 4;"
+                  visible="false" VBox.vgrow="NEVER">
+                <Label text="HERRAMIENTA RECORTE" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+
+                <HBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #444; -fx-padding: 5; -fx-background-radius: 3;">
+                    <RadioButton fx:id="rbCropDraw" text="Dibujar" textFill="#cccccc" selected="true"/>
+                    <RadioButton fx:id="rbCropPan" text="Mover" textFill="#cccccc"/>
+                </HBox>
+
+                <Label text="Arrastra el mouse sobre la imagen." textFill="#aaaaaa" wrapText="true" style="-fx-font-size: 10px;"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <VBox.margin><Insets top="5.0" /></VBox.margin>
+
+                    <Label text="Resolución resultante:" textFill="#aaaaaa" style="-fx-font-size: 10px;"/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="5.0">
+                        <TextField fx:id="txtCropResW" editable="false" prefWidth="45" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-font-size: 11px; -fx-alignment: CENTER;" text="0"/>
+                        <Label text="x" textFill="#aaaaaa" style="-fx-font-size: 10px;"/>
+                        <TextField fx:id="txtCropResH" editable="false" prefWidth="45" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-font-size: 11px; -fx-alignment: CENTER;" text="0"/>
+                        <Label text="px" textFill="#aaaaaa" style="-fx-font-size: 10px;"/>
+                    </HBox>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="10.0">
+                    <Button onAction="#onApplyCrop" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold;" text="Recortar" />
+                    <Button onAction="#onClearCropSelection" style="-fx-background-color: #666666; -fx-text-fill: white; -fx-cursor: hand;" text="Limpiar Selección" />
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="zoomContainer" managed="false" spacing="8.0" style="-fx-background-color: #535353; -fx-padding: 10; -fx-background-radius: 4; -fx-border-color: #333333; -fx-border-radius: 4;" visible="false" VBox.vgrow="NEVER">
+                <Label text="ZOOM / ESCALADO" style="-fx-text-fill: #e0e0e0; -fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 10; -fx-border-color: #0078D7; -fx-border-width: 0 0 0 3;"/>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <Label prefWidth="60.0" text="Escala %" textFill="#cccccc" />
+                    <Slider fx:id="sliderZoom" max="400.0" min="10.0" value="100.0" HBox.hgrow="ALWAYS" />
+                    <TextField fx:id="txtZoom" alignment="CENTER_RIGHT" prefWidth="50.0" style="-fx-background-color: #2b2b2b; -fx-text-fill: white; -fx-border-color: #666666;" text="100" />
+                </HBox>
+                <Label text="Método de Interpolación:" textFill="#cccccc"><VBox.margin><Insets top="5.0" /></VBox.margin></Label>
+                <ComboBox fx:id="comboInterpolation" maxWidth="Infinity" style="-fx-background-color: #2b2b2b; -fx-mark-color: gray; -fx-text-base-color: white;" />
+                <HBox alignment="CENTER">
+                    <Button onAction="#onApplyZoomClick" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-size: 11px; -fx-cursor: hand;" text="Aplicar Zoom">
+                        <VBox.margin><Insets top="10.0" /></VBox.margin>
+                    </Button>
+                </HBox>
+            </VBox>
+        </VBox>
+    </right>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #2b2b2b; -fx-border-color: #111111; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+            <padding><Insets bottom="4.0" left="10.0" right="10.0" top="4.0" /></padding>
+            <Label fx:id="lblStatus" text="Listo" textFill="#999999"><font><Font size="11.0" /></font></Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblPixelInfo" textFill="#aaaaaa" style="-fx-font-family: 'Consolas', monospace;">
+                <font><Font size="11.0" /></font>
+            </Label>
+            <Rectangle fx:id="rectPixelColor" width="14" height="14" arcWidth="4" arcHeight="4" stroke="#777777" strokeType="INSIDE" visible="false"/>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblImageInfo" textFill="#dddddd">
+                <padding><Insets right="10.0" /></padding>
+                <font><Font size="11.0" /></font>
+            </Label>
+        </HBox>
+    </bottom>
+</BorderPane>
