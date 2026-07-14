@@ -101,6 +101,11 @@ class MainController {
     @FXML private lateinit var txtThresholdMax: TextField
     @FXML private lateinit var chkApplyThreshold: CheckBox
 
+    // --- Controles Umbral Adaptativo ---
+    @FXML private lateinit var spinAdaptiveBlock: Spinner<Int>
+    @FXML private lateinit var sliderAdaptiveC: Slider
+    @FXML private lateinit var txtAdaptiveC: TextField
+
     // --- Variables de Recorte ---
     @FXML private lateinit var cropContainer: VBox
     @FXML private lateinit var rbCropDraw: RadioButton
@@ -204,6 +209,7 @@ class MainController {
         )
         comboMorphShape.value = MorphologyService.StructShape.RECTANGULO
         spinMorphSize.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(3, 21, 3, 2)
+        spinAdaptiveBlock.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(3, 99, 11, 2)
     }
 
     private fun setupPixelInspector() {
@@ -357,6 +363,8 @@ class MainController {
         setupTextFieldInt(txtThresholdSingle, sliderThresholdSingle)
         setupTextFieldInt(txtThresholdMin, sliderThresholdMin)
         setupTextFieldInt(txtThresholdMax, sliderThresholdMax)
+        setupTextFieldDoubleNoDecimals(txtAdaptiveC, sliderAdaptiveC)
+        sliderAdaptiveC.valueProperty().addListener { _, _, n -> if(!txtAdaptiveC.isFocused) txtAdaptiveC.text = "%.1f".format(n) }
     }
 
     private fun setupZoomControls() {
@@ -995,6 +1003,24 @@ class MainController {
         boxSingleThreshold.isVisible = (type == ThresholdType.BINARY)
         boxRangeThreshold.isVisible = (type != ThresholdType.BINARY)
         if (baseImage != null) applyThreshold()
+    }
+
+    @FXML
+    fun onCalculateOtsuClick() {
+        if (baseImage == null) return
+        val otsuVal = SegmentationService.calculateOtsuThreshold(baseImage!!)
+        sliderThresholdSingle.value = otsuVal
+        updateStatus("Otsu calculado: ${otsuVal.toInt()}")
+    }
+
+    @FXML
+    fun onApplyAdaptiveClick() {
+        if (baseImage == null) return
+        val blockSize = spinAdaptiveBlock.value
+        val cVal = sliderAdaptiveC.value
+        applyFilterInBackground("Umbral Adaptativo (${blockSize}x${blockSize}, C=$cVal)") {
+            SegmentationService.applyAdaptiveThreshold(baseImage!!, blockSize, cVal)
+        }
     }
 
     private fun applyThreshold(updateCharts: Boolean = true) {

@@ -290,6 +290,9 @@
                                         <Slider fx:id="sliderThresholdSingle" blockIncrement="1.0" max="255.0" value="128.0" HBox.hgrow="ALWAYS" />
                                         <TextField fx:id="txtThresholdSingle" alignment="CENTER_RIGHT" prefWidth="55.0" text="128" />
                                     </HBox>
+                                    <HBox alignment="CENTER">
+                                        <Button onAction="#onCalculateOtsuClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4; -fx-padding: 6;" text="Calcular Otsu" />
+                                    </HBox>
                                 </VBox>
                                 <VBox fx:id="boxRangeThreshold" spacing="12.0" visible="false">
                                     <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -304,6 +307,24 @@
                                     </HBox>
                                 </VBox>
                             </StackPane>
+                        </VBox>
+
+                        <!-- UMBRAL ADAPTATIVO -->
+                        <VBox spacing="12.0" style="-fx-background-color: #4a4a4a; -fx-padding: 15; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6;">
+                            <Label style="-fx-font-weight: bold;" text="Umbral Adaptativo (Gaussiano):" textFill="#FFFFFF" />
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label prefWidth="70.0" text="Bloque (N):" textFill="#FFFFFF" />
+                                <Spinner fx:id="spinAdaptiveBlock" maxWidth="Infinity" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-border-radius: 3;" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label prefWidth="70.0" text="Constante C:" textFill="#FFFFFF" />
+                                <Slider fx:id="sliderAdaptiveC" blockIncrement="0.5" max="20.0" min="-20.0" value="2.0" HBox.hgrow="ALWAYS" />
+                                <TextField fx:id="txtAdaptiveC" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #1E1E1E; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-radius: 3;" text="2.0" />
+                            </HBox>
+                            <Label style="-fx-font-size: 10px;" text="Nota: El tamaño de bloque debe ser impar." textFill="#CCCCCC" wrapText="true" />
+                            <HBox alignment="CENTER">
+                                <Button onAction="#onApplyAdaptiveClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4; -fx-padding: 6;" text="Aplicar Adaptativo" />
+                            </HBox>
                         </VBox>
                     </VBox>
                 </TitledPane>
