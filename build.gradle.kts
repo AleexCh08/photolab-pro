@@ -23,7 +23,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("com.example.photolab")
-    mainClass.set("com.example.photolab.PDIApplication")
+    mainClass.set("com.example.photolab.PDIApplicationKt")
 }
 kotlin {
     jvmToolchain(21)
@@ -55,6 +55,7 @@ jlink {
     jpackage {
         skipInstaller = false
         installerName = "PhotoLabSetup"
+        icon = "src/main/resources/com/example/photolab/icon.png"
 
         installerOptions.addAll(listOf(
             "--win-menu",
