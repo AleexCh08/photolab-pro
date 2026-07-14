@@ -555,6 +555,7 @@ class MainController {
         val alert = Alert(Alert.AlertType.CONFIRMATION)
         alert.title = "Salir"
         alert.headerText = "Hay una imagen abierta"
+        alert.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
         alert.contentText = "¿Desea guardar los cambios antes de salir?"
 
         val btnSave = ButtonType("Guardar y Salir")
@@ -670,6 +671,7 @@ class MainController {
         val dialog = Dialog<Pair<Int, Int>>()
         dialog.title = title
         dialog.headerText = "Configurar Tamaño del Kernel (Matriz)"
+        dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
 
         val spinW = Spinner<Int>(1, 7, 3)
@@ -734,6 +736,7 @@ class MainController {
         val dialog = Dialog<Triple<Int, Int, DoubleArray>>()
         dialog.title = "Filtro de Convolución Personalizado"
         dialog.headerText = "Define tu propio Kernel"
+        dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
 
         val spinW = Spinner<Int>(1, 10, 3)
@@ -901,6 +904,7 @@ class MainController {
                 val alert = Alert(Alert.AlertType.ERROR)
                 alert.title = "Error de Formato"
                 alert.headerText = "Valores inválidos en la matriz"
+                dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
                 alert.contentText = "Por favor, revisa las celdas marcadas en rojo. Deben ser números válidos."
                 alert.showAndWait()
             }
@@ -1595,6 +1599,7 @@ class MainController {
         val dialog = Dialog<Color>()
         dialog.title = opName
         dialog.headerText = "Selecciona el color:"
+        dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
         val colorPicker = ColorPicker(Color.CYAN)
         val box = VBox(colorPicker)
@@ -1734,6 +1739,7 @@ class MainController {
         val dialog = Dialog<Double>()
         dialog.title = title
         dialog.headerText = header
+        dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
         dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
 
         // Usamos 0.0 fijo como mínimo
