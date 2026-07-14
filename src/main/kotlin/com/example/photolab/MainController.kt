@@ -1025,6 +1025,33 @@ class MainController {
     @FXML fun onNegativeClick() = applyGenericFilter("Negativo") { img, _ -> PixelOperations.applyNegative(img) }
 
     @FXML
+    fun onQuantizeBitsClick() {
+        showIntParameterDialog("Reducción de Bits", "Configurar profundidad de color", "Bits por canal (1-8):", 8, 4) { value ->
+            applyFilterInBackground("Reducción de Bits ($value bits)") {
+                QuantizationService.reduceBitDepth(baseImage!!, value)
+            }
+        }
+    }
+
+    @FXML
+    fun onQuantizePopularityClick() {
+        showIntParameterDialog("Algoritmo de Popularidad", "Configurar tamaño de paleta", "Colores (2-256):", 256, 64) { value ->
+            applyFilterInBackground("Popularidad ($value colores)") {
+                QuantizationService.applyPopularityQuantization(baseImage!!, value)
+            }
+        }
+    }
+
+    @FXML
+    fun onQuantizeKMeansClick() {
+        showIntParameterDialog("K-Means Clustering", "Configurar número de clústeres", "K (2-64):", 64, 16) { value ->
+            applyFilterInBackground("K-Means (K=$value)") {
+                QuantizationService.applyKMeansQuantization(baseImage!!, value)
+            }
+        }
+    }
+
+    @FXML
     fun onNoiseSaltPepperClick() {
         showParameterDialog("Ruido Sal y Pimienta", "Configurar densidad", "Porcentaje de ruido:", 0.2, 0.05) { value ->
             applyFilterInBackground("Ruido Sal y Pimienta") {
@@ -1762,6 +1789,42 @@ class MainController {
         dialog.dialogPane.content = box
 
         dialog.setResultConverter { if (it == ButtonType.OK) slider.value else null }
+        dialog.showAndWait().ifPresent { value ->
+            onApply(value)
+        }
+    }
+
+    private fun showIntParameterDialog(title: String, header: String, label: String, max: Int, default: Int, onApply: (Int) -> Unit) {
+        if (baseImage == null) { updateStatus("No hay imagen cargada."); return }
+
+        val dialog = Dialog<Int>()
+        dialog.title = title
+        dialog.headerText = header
+        dialog.dialogPane.style = "-fx-base: #383838; -fx-background-color: #383838; -fx-font-family: 'Segoe UI', sans-serif;"
+        dialog.dialogPane.buttonTypes.addAll(ButtonType.OK, ButtonType.CANCEL)
+
+        val slider = Slider(1.0, max.toDouble(), default.toDouble())
+        slider.isShowTickLabels = true
+        slider.isShowTickMarks = true
+        slider.majorTickUnit = (max / 4).toDouble().coerceAtLeast(1.0)
+        slider.minorTickCount = 0
+        slider.isSnapToTicks = true // Fuerza al slider a saltar solo de entero en entero
+
+        val lblValue = Label(default.toString())
+        lblValue.style = "-fx-font-weight: bold;"
+
+        slider.valueProperty().addListener { _, _, n ->
+            lblValue.text = n.toInt().toString()
+        }
+
+        val box = VBox(10.0)
+        box.alignment = Pos.CENTER_LEFT
+        box.padding = Insets(20.0)
+        box.children.addAll(Label(label), slider, lblValue)
+
+        dialog.dialogPane.content = box
+
+        dialog.setResultConverter { if (it == ButtonType.OK) slider.value.toInt() else null }
         dialog.showAndWait().ifPresent { value ->
             onApply(value)
         }

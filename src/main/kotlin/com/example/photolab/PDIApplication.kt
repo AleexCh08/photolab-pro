@@ -6,9 +6,11 @@ import javafx.scene.Scene
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import java.net.URL
+import nu.pattern.OpenCV
 
 class PDIApplication : Application() {
     override fun start(stage: Stage) {
+        OpenCV.loadLocally()
         val fxmlUrl: URL? = PDIApplication::class.java.getResource("main-view.fxml")
 
         val fxmlLoader = FXMLLoader(fxmlUrl)

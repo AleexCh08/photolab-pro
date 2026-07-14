@@ -57,6 +57,12 @@
                     <SeparatorMenuItem />
                     <MenuItem mnemonicParsing="false" onAction="#onNegativeClick" text="Negativo (Invertir)" />
                     <SeparatorMenuItem />
+                    <Menu mnemonicParsing="false" text="Cuantización de Color">
+                        <MenuItem mnemonicParsing="false" onAction="#onQuantizeBitsClick" text="Reducción de Bits" />
+                        <MenuItem mnemonicParsing="false" onAction="#onQuantizePopularityClick" text="Algoritmo de Popularidad" />
+                        <MenuItem mnemonicParsing="false" onAction="#onQuantizeKMeansClick" text="K-Means" />
+                    </Menu>
+                    <SeparatorMenuItem />
                     <MenuItem fx:id="menuUndo" accelerator="Shortcut+Z" disable="true" mnemonicParsing="false" onAction="#onUndoClick" text="Deshacer" />
                     <MenuItem fx:id="menuResetImage" accelerator="Shortcut+R" disable="true" mnemonicParsing="false" onAction="#onResetImageClick" text="Reiniciar Imagen" />
                 </Menu>

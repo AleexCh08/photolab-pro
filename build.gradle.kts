@@ -35,6 +35,7 @@ javafx {
 }
 
 dependencies {
+    implementation("org.openpnp:opencv:4.7.0-0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
