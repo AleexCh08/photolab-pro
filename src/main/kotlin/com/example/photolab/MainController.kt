@@ -436,7 +436,7 @@ class MainController {
         fileChooser.title = "Guardar Imagen"
         fileChooser.initialFileName = "imagen_editada"
 
-        val initialDir = File("./Imagenes")
+        val initialDir = File(System.getProperty("user.home"), "Pictures")
         if (initialDir.exists() && initialDir.isDirectory) {
             fileChooser.initialDirectory = initialDir
         }
