@@ -64,6 +64,8 @@ class MainController {
     // --- Botones de Acción Global ---
     @FXML private lateinit var btnResetImage: Button
     @FXML private lateinit var btnUndoGlobal: Button
+    @FXML private lateinit var menuUndo: MenuItem
+    @FXML private lateinit var menuResetImage: MenuItem
 
     // --- Gráficos ---
     @FXML private lateinit var histogramChart: AreaChart<Number, Number>
@@ -156,6 +158,9 @@ class MainController {
         setupCropHandlers()
         setupHistoryPanel()
 
+        menuUndo.disableProperty().bind(btnUndoGlobal.disableProperty())
+        menuResetImage.disableProperty().bind(btnResetImage.disableProperty())
+
         toolGroup.selectedToggleProperty().addListener { _, _, newToggle ->
             when (newToggle) {
                 btnToolPan -> {
@@ -171,6 +176,7 @@ class MainController {
                     exitCropMode()
                     scrollPane.isPannable = false
                     mainImageView.cursor = Cursor.CROSSHAIR
+                    tpAnalysis.isExpanded = true
                 }
                 null -> {
                     btnToolPan.isSelected = true
