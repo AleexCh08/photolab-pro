@@ -47,7 +47,6 @@ class MainController {
         override fun toString(): String = label
     }
 
-    // Enum para identificar qué parte estamos arrastrando
     private enum class DragHandle { NONE, CENTER, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT }
 
     // --- Elementos de UI Generales ---
@@ -61,21 +60,10 @@ class MainController {
     // --- Paneles y Contenedores ---
     @FXML private lateinit var btnCompare: Button
     @FXML private lateinit var imageStackPane: StackPane
-    @FXML private lateinit var rightPanel: VBox
-    @FXML private lateinit var histogramContainer: VBox
-    @FXML private lateinit var tonalCurveContainer: VBox
-    @FXML private lateinit var thresholdContainer: VBox
-    @FXML private lateinit var zoomContainer: VBox
-    @FXML private lateinit var lineProfileContainer: VBox
 
-    // --- Menús ---
-    @FXML private lateinit var menuHistogram: CheckMenuItem
-    @FXML private lateinit var menuTonalCurve: CheckMenuItem
-    @FXML private lateinit var menuThreshold: CheckMenuItem
-    @FXML private lateinit var menuZoomPanel: CheckMenuItem
-    @FXML private lateinit var menuLineProfile: CheckMenuItem
-    @FXML private lateinit var menuResetImage: MenuItem
-    @FXML private lateinit var menuUndo: MenuItem
+    // --- Botones de Acción Global ---
+    @FXML private lateinit var btnResetImage: Button
+    @FXML private lateinit var btnUndoGlobal: Button
 
     // --- Gráficos ---
     @FXML private lateinit var histogramChart: AreaChart<Number, Number>
@@ -121,7 +109,6 @@ class MainController {
     // --- Variables para el Historial
     @FXML private lateinit var historyPanel: VBox
     @FXML private lateinit var listHistory: ListView<HistoryState>
-    @FXML private lateinit var menuHistory: CheckMenuItem
     @FXML private lateinit var btnRestoreHistory: Button
 
     // --- Variables de Estado ---
@@ -142,6 +129,16 @@ class MainController {
     private var currentHandle = DragHandle.NONE
     private val handleSize = 10.0
 
+    // Variables para la barra lateral
+    @FXML private lateinit var toolGroup: ToggleGroup
+    @FXML private lateinit var btnToolPan: ToggleButton
+    @FXML private lateinit var btnToolCrop: ToggleButton
+    @FXML private lateinit var btnToolProfile: ToggleButton
+
+    // Panel de TitledPanes
+    @FXML private lateinit var tpAnalysis: TitledPane
+    @FXML private lateinit var tpDevelop: TitledPane
+
     // =======================
     // SECCIÓN: Inicialización
     // =======================
@@ -158,6 +155,35 @@ class MainController {
         setupPixelInspector()
         setupCropHandlers()
         setupHistoryPanel()
+
+        toolGroup.selectedToggleProperty().addListener { _, _, newToggle ->
+            when (newToggle) {
+                btnToolPan -> {
+                    exitCropMode()
+                    scrollPane.isPannable = true
+                    mainImageView.cursor = Cursor.OPEN_HAND
+                }
+                btnToolCrop -> {
+                    scrollPane.isPannable = false
+                    onToggleCropMode()
+                }
+                btnToolProfile -> {
+                    exitCropMode()
+                    scrollPane.isPannable = false
+                    mainImageView.cursor = Cursor.CROSSHAIR
+                }
+                null -> {
+                    btnToolPan.isSelected = true
+                }
+            }
+        }
+
+        tpAnalysis.expandedProperty().addListener { _, _, isExpanded ->
+            if (isExpanded && mainImageView.image != null) updateHistogram(mainImageView.image)
+        }
+        tpDevelop.expandedProperty().addListener { _, _, isExpanded ->
+            if (isExpanded && mainImageView.image != null) updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
+        }
     }
 
     private fun setupPixelInspector() {
@@ -228,7 +254,7 @@ class MainController {
         comboHistogramChannel.value = "RGB (Compuesto)"
 
         comboHistogramChannel.valueProperty().addListener { _, _, _ ->
-            if (mainImageView.image != null && menuHistogram.isSelected) {
+            if (mainImageView.image != null && tpAnalysis.isExpanded) {
                 updateHistogram(mainImageView.image)
             }
         }
@@ -362,11 +388,11 @@ class MainController {
 
             if (!image.isError) {
                 originalFile = file
-                menuResetImage.isDisable = true
+                btnResetImage.isDisable = true
 
                 undoStack.clear()
                 btnCompare.isVisible = false
-                menuUndo.isDisable = true
+                btnUndoGlobal.isDisable = true
 
                 sliderBrightness.value = 0.0; sliderContrast.value = 1.0
                 txtBrightness.text = "0.00"; txtContrast.text = "1.00"
@@ -510,8 +536,8 @@ class MainController {
         listHistory.items.clear()
         undoStack.clear()
         btnCompare.isVisible = false
-        menuUndo.isDisable = true
-        menuResetImage.isDisable = true
+        btnUndoGlobal.isDisable = true
+        btnResetImage.isDisable = true
     }
 
     @FXML
@@ -540,109 +566,6 @@ class MainController {
             else -> return
         }
     }
-
-    // ==============================
-    // SECCIÓN: Paneles y visibilidad
-    // ==============================
-
-    @FXML
-    fun onCloseRightPanelClick() {
-        if (menuHistogram.isSelected) { menuHistogram.isSelected = false; onToggleHistogram() }
-        if (menuTonalCurve.isSelected) { menuTonalCurve.isSelected = false; onToggleTonalCurve() }
-        if (menuThreshold.isSelected) { menuThreshold.isSelected = false; onToggleThreshold() }
-        if (menuZoomPanel.isSelected) { menuZoomPanel.isSelected = false; onToggleZoomPanel() }
-        if (menuLineProfile.isSelected) { menuLineProfile.isSelected = false; onToggleLineProfile() }
-        if (cropContainer.isVisible) {
-            exitCropMode()
-        }
-    }
-
-    @FXML
-    fun onToggleHistogram() {
-        if (menuHistogram.isSelected) closeInspectionGroup()
-        val isVisible = menuHistogram.isSelected
-        histogramContainer.isVisible = isVisible
-        histogramContainer.isManaged = isVisible
-        checkRightPanelVisibility()
-        if (isVisible && mainImageView.image != null) updateHistogram(mainImageView.image)
-    }
-
-    @FXML
-    fun onToggleTonalCurve() {
-        if (menuTonalCurve.isSelected) closeInspectionGroup()
-        val isVisible = menuTonalCurve.isSelected
-        tonalCurveContainer.isVisible = isVisible
-        tonalCurveContainer.isManaged = isVisible
-        checkRightPanelVisibility()
-        if (isVisible && mainImageView.image != null) {
-            updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
-        }
-    }
-
-    @FXML
-    fun onToggleThreshold() {
-        if (menuThreshold.isSelected) closeInspectionGroup()
-        val isVisible = menuThreshold.isSelected
-        thresholdContainer.isVisible = isVisible
-        thresholdContainer.isManaged = isVisible
-        checkRightPanelVisibility()
-
-        if (isVisible && baseImage != null && chkApplyThreshold.isSelected) applyThreshold()
-    }
-
-    @FXML
-    fun onToggleZoomPanel() {
-        if (menuZoomPanel.isSelected) closeAnalysisGroup()
-        togglePanel(zoomContainer, menuZoomPanel)
-    }
-
-    @FXML
-    fun onToggleLineProfile() {
-        val isVisible = menuLineProfile.isSelected
-        if (isVisible) {
-            closeAnalysisGroup()
-        } else {
-            clearOverlay()
-            currentProfileRow = -1
-            lineProfileChart.data.clear()
-        }
-        togglePanel(lineProfileContainer, menuLineProfile)
-    }
-
-    private fun closeAnalysisGroup() {
-        if (menuHistogram.isSelected) { menuHistogram.isSelected = false; onToggleHistogram() }
-        if (menuTonalCurve.isSelected) { menuTonalCurve.isSelected = false; onToggleTonalCurve() }
-        if (menuThreshold.isSelected) { menuThreshold.isSelected = false; onToggleThreshold() }
-    }
-
-    private fun closeInspectionGroup() {
-        if (menuZoomPanel.isSelected) { menuZoomPanel.isSelected = false; onToggleZoomPanel() }
-        if (menuLineProfile.isSelected) { menuLineProfile.isSelected = false; onToggleLineProfile() }
-    }
-
-    private fun togglePanel(panel: VBox, menuItem: CheckMenuItem) {
-        val isVisible = menuItem.isSelected
-        panel.isVisible = isVisible
-        panel.isManaged = isVisible
-        checkRightPanelVisibility()
-
-        if (isVisible && mainImageView.image != null) {
-            if (panel == histogramContainer) updateHistogram(mainImageView.image)
-            if (panel == tonalCurveContainer) updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
-        }
-    }
-
-    private fun checkRightPanelVisibility() {
-        val shouldShowPanel = histogramContainer.isVisible ||
-                tonalCurveContainer.isVisible ||
-                thresholdContainer.isVisible ||
-                zoomContainer.isVisible ||
-                lineProfileContainer.isVisible ||
-                cropContainer.isVisible
-        rightPanel.isVisible = shouldShowPanel
-        rightPanel.isManaged = shouldShowPanel
-    }
-
     // =====================================
     // SECCIÓN: Transformaciones geométricas
     // =====================================
@@ -1025,7 +948,7 @@ class MainController {
 
         updateImageInfo(newImage, updateCharts)
 
-        if (updateCharts && menuTonalCurve.isSelected) {
+        if (updateCharts && tpDevelop.isExpanded) {
             updateTonalCurveChart(b, c, g)
         }
     }
@@ -1081,7 +1004,7 @@ class MainController {
         mainImageView.image = newImage
         updateImageInfo(newImage, updateCharts = updateCharts)
         updateStatus("Umbralización aplicada.")
-        menuResetImage.isDisable = false
+        btnResetImage.isDisable = false
     }
 
     @FXML fun onGrayscaleAvgClick() = applyGenericFilter("Escala Grises (Promedio)") { img, _ -> PixelOperations.toGrayscale(img, PixelOperations.GrayscaleMethod.AVERAGE) }
@@ -1152,8 +1075,8 @@ class MainController {
             updateBaseAfterFilter(previous, "Deshacer", saveHistory = false)
 
             if (undoStack.isEmpty()) {
-                menuUndo.isDisable = true
-                menuResetImage.isDisable = true
+                btnUndoGlobal.isDisable = true
+                btnResetImage.isDisable = true
             }
             updateStatus("Cambio deshecho.")
         }
@@ -1162,7 +1085,7 @@ class MainController {
     private fun updateBaseAfterFilter(newImage: Image, actionName: String = "Filtro/Ajuste", saveHistory: Boolean = true) {
         if (saveHistory && baseImage != null) {
             undoStack.push(baseImage)
-            menuUndo.isDisable = false
+            btnUndoGlobal.isDisable = false
         }
 
         if (saveHistory) {
@@ -1190,7 +1113,7 @@ class MainController {
         mainImageView.image = newImage
         updateImageInfo(newImage, updateCharts = true)
 
-        menuResetImage.isDisable = false
+        btnResetImage.isDisable = false
         btnCompare.isVisible = undoStack.isNotEmpty()
     }
 
@@ -1212,8 +1135,8 @@ class MainController {
             }
             lblImageInfo.text = "$w x $h px  |  $bpp  |  $uniqueColors colores"
 
-            if (menuHistogram.isSelected) updateHistogram(image)
-            if (menuTonalCurve.isSelected) updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
+            if (tpAnalysis.isExpanded) updateHistogram(image)
+            if (tpDevelop.isExpanded) updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
         }
     }
 
@@ -1316,7 +1239,7 @@ class MainController {
 
     @FXML
     fun onMainImageClick(event: MouseEvent) {
-        if (!menuLineProfile.isSelected || mainImageView.image == null) return
+        if (!btnToolProfile.isSelected || mainImageView.image == null) return
 
         val image = mainImageView.image
         val bounds = mainImageView.boundsInLocal
@@ -1595,14 +1518,12 @@ class MainController {
     @FXML
     fun onToggleCropMode() {
         isCropMode = true
-        onCloseRightPanelClick()
 
         cropContainer.isVisible = true
         cropContainer.isManaged = true
         rbCropDraw.isSelected = true
         scrollPane.isPannable = false
         mainImageView.cursor = Cursor.CROSSHAIR
-        checkRightPanelVisibility()
 
         updateStatus("Modo Recorte: Arrastre el mouse para seleccionar área.")
     }
@@ -1637,7 +1558,6 @@ class MainController {
         isCropMode = false
         cropContainer.isVisible = false
         cropContainer.isManaged = false
-        checkRightPanelVisibility()
         clearOverlay()
         selectedCropRect = null
         currentVisualRect = null
@@ -1885,28 +1805,18 @@ class MainController {
     }
 
     @FXML
-    fun onToggleHistory() {
-        val isVisible = menuHistory.isSelected
-        historyPanel.isVisible = isVisible
-        historyPanel.isManaged = isVisible
-    }
-
-    @FXML
     fun onRestoreHistoryClick() {
         val selectedState = listHistory.selectionModel.selectedItem
         if (selectedState != null) {
-            // Restauramos la imagen seleccionada
             baseImage = selectedState.fullImage
             mainImageView.image = baseImage
 
             val selectedIndex = listHistory.selectionModel.selectedIndex
             if (selectedIndex > 0) {
-                // Removemos los elementos más nuevos (del 0 al index)
                 listHistory.items.remove(0, selectedIndex)
             }
 
-            // Sincronizar stack antiguo de deshacer
-            undoStack.clear() // Simplificación: reiniciamos stack al saltar en historial
+            undoStack.clear()
 
             updateImageInfo(baseImage!!, updateCharts = true)
             updateStatus("Restaurado a: ${selectedState.actionName}")
