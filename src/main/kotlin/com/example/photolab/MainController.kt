@@ -32,6 +32,7 @@ import kotlin.math.abs
 import javafx.concurrent.Task
 import javafx.scene.Cursor
 import kotlin.math.pow
+import javafx.scene.control.SpinnerValueFactory
 
 class MainController {
 
@@ -140,6 +141,11 @@ class MainController {
     // Panel de TitledPanes
     @FXML private lateinit var tpAnalysis: TitledPane
     @FXML private lateinit var tpDevelop: TitledPane
+    @FXML private lateinit var tpMorphology: TitledPane
+
+    // Controles de Morfología
+    @FXML private lateinit var comboMorphShape: ComboBox<MorphologyService.StructShape>
+    @FXML private lateinit var spinMorphSize: Spinner<Int>
 
     // =======================
     // SECCIÓN: Inicialización
@@ -190,6 +196,14 @@ class MainController {
         tpDevelop.expandedProperty().addListener { _, _, isExpanded ->
             if (isExpanded && mainImageView.image != null) updateTonalCurveChart(sliderBrightness.value, sliderContrast.value)
         }
+
+        comboMorphShape.items.addAll(
+            MorphologyService.StructShape.RECTANGULO,
+            MorphologyService.StructShape.CRUZ,
+            MorphologyService.StructShape.ELIPSE
+        )
+        comboMorphShape.value = MorphologyService.StructShape.RECTANGULO
+        spinMorphSize.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(3, 21, 3, 2)
     }
 
     private fun setupPixelInspector() {
@@ -1066,6 +1080,22 @@ class MainController {
             applyFilterInBackground("Ruido Gaussiano") {
                 PixelOperations.generateGaussianNoise(baseImage!!, value)
             }
+        }
+    }
+
+    @FXML fun onMorphErosionClick() { tpMorphology.isExpanded = true; executeMorphology("Erosión", MorphologyService.MorphOp.EROSION) }
+    @FXML fun onMorphDilationClick() { tpMorphology.isExpanded = true; executeMorphology("Dilatación", MorphologyService.MorphOp.DILATACION) }
+    @FXML fun onMorphOpeningClick() { tpMorphology.isExpanded = true; executeMorphology("Apertura", MorphologyService.MorphOp.APERTURA) }
+    @FXML fun onMorphClosingClick() { tpMorphology.isExpanded = true; executeMorphology("Cierre", MorphologyService.MorphOp.CIERRE) }
+
+    private fun executeMorphology(title: String, op: MorphologyService.MorphOp) {
+        if (baseImage == null) { updateStatus("No hay imagen cargada."); return }
+
+        val size = spinMorphSize.value
+        val shape = comboMorphShape.value
+
+        applyFilterInBackground("$title (${size}x${size}, $shape)") {
+            MorphologyService.applyMorphology(baseImage!!, op, shape, size)
         }
     }
 

@@ -308,6 +308,29 @@
                     </VBox>
                 </TitledPane>
 
+                <!-- PANEL: MORFOLOGÍA MATEMÁTICA -->
+                <TitledPane fx:id="tpMorphology" expanded="false" style="-fx-font-weight: bold;" text="Morfología Matemática">
+                    <VBox spacing="15.0" style="-fx-background-color: #383838; -fx-padding: 10;">
+                        <VBox spacing="12.0" style="-fx-background-color: #4a4a4a; -fx-padding: 15; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6;">
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label prefWidth="70.0" text="Forma:" textFill="#FFFFFF" />
+                                <ComboBox fx:id="comboMorphShape" maxWidth="Infinity" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-border-radius: 3; -fx-text-base-color: white;" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Label prefWidth="70.0" text="Tamaño:" textFill="#FFFFFF" />
+                                <Spinner fx:id="spinMorphSize" maxWidth="Infinity" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-border-radius: 3;" HBox.hgrow="ALWAYS" />
+                            </HBox>
+                            <Label style="-fx-font-size: 10px;" text="Nota: El tamaño debe ser impar (3x3, 5x5...)." textFill="#CCCCCC" wrapText="true" />
+                            <GridPane alignment="CENTER" hgap="10.0" vgap="10.0">
+                                <Button mnemonicParsing="false" onAction="#onMorphErosionClick" prefWidth="120.0" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4;" text="Erosión" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Button mnemonicParsing="false" onAction="#onMorphDilationClick" prefWidth="120.0" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4;" text="Dilatación" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Button mnemonicParsing="false" onAction="#onMorphOpeningClick" prefWidth="120.0" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4;" text="Apertura" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Button mnemonicParsing="false" onAction="#onMorphClosingClick" prefWidth="120.0" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4;" text="Cierre" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                            </GridPane>
+                        </VBox>
+                    </VBox>
+                </TitledPane>
+
                 <!-- PANEL: HISTORIAL DE CAMBIOS -->
                 <TitledPane expanded="false" style="-fx-font-weight: bold;" text="Historial de Cambios">
                     <VBox fx:id="historyPanel" prefHeight="250.0" spacing="10.0" style="-fx-background-color: #383838; -fx-padding: 10;">
