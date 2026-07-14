@@ -335,7 +335,9 @@
                 <TitledPane expanded="false" style="-fx-font-weight: bold;" text="Historial de Cambios">
                     <VBox fx:id="historyPanel" prefHeight="250.0" spacing="10.0" style="-fx-background-color: #383838; -fx-padding: 10;">
                         <ListView fx:id="listHistory" VBox.vgrow="ALWAYS" />
-                        <Button fx:id="btnRestoreHistory" maxWidth="Infinity" mnemonicParsing="false" onAction="#onRestoreHistoryClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4; -fx-padding: 8;" text="Restaurar Estado" />
+                        <HBox alignment="CENTER">
+                            <Button fx:id="btnRestoreHistory" mnemonicParsing="false" onAction="#onRestoreHistoryClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4; -fx-padding: 8;" text="Restaurar Estado" />
+                        </HBox>
                     </VBox>
                 </TitledPane>
 
