@@ -9,6 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
 <!-- Se aplica -fx-base para activar el Tema Oscuro global automático -->
@@ -19,8 +20,16 @@
         <VBox style="-fx-border-color: #222222; -fx-border-width: 0 0 1 0;" BorderPane.alignment="CENTER">
             <MenuBar style="-fx-padding: 2; -fx-font-size: 12px;">
                 <Menu mnemonicParsing="false" text="Archivo">
-                    <MenuItem accelerator="Shortcut+O" mnemonicParsing="false" onAction="#onOpenClick" text="Abrir imagen..." />
-                    <MenuItem accelerator="Shortcut+S" mnemonicParsing="false" onAction="#onSaveClick" text="Guardar imagen..." />
+                    <MenuItem accelerator="Shortcut+O" mnemonicParsing="false" onAction="#onOpenClick" text="Abrir imagen...">
+                        <graphic>
+                            <SVGPath content="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" fill="#CCCCCC" scaleX="0.6" scaleY="0.6" />
+                        </graphic>
+                    </MenuItem>
+                    <MenuItem accelerator="Shortcut+S" mnemonicParsing="false" onAction="#onSaveClick" text="Guardar imagen...">
+                        <graphic>
+                            <SVGPath content="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" fill="#CCCCCC" scaleX="0.6" scaleY="0.6" />
+                        </graphic>
+                    </MenuItem>
                     <MenuItem accelerator="Shortcut+W" mnemonicParsing="false" onAction="#onCloseImageClick" text="Cerrar imagen" />
                     <SeparatorMenuItem />
                     <MenuItem accelerator="Shortcut+Q" mnemonicParsing="false" onAction="#onExitClick" text="Salir" />
@@ -75,28 +84,49 @@
                 </Menu>
             </MenuBar>
 
-            <ToolBar style="-fx-padding: 8 10 8 10; -fx-border-color: #222222; -fx-border-width: 1 0 0 0; -fx-background-color: #2D2D30;">
-                <Button fx:id="btnUndoGlobal" disable="true" mnemonicParsing="false" onAction="#onUndoClick" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="⮪ Deshacer" />
-                <Button fx:id="btnCompare" mnemonicParsing="false" style="-fx-background-color: #007ACC; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="👁 Comparar" visible="false" />
+            <ToolBar style="-fx-padding: 8 10 8 10; -fx-border-color: #4a4a4a; -fx-border-width: 1 0 0 0; -fx-background-color: #2D2D30;">
+                <Button fx:id="btnUndoGlobal" disable="true" mnemonicParsing="false" onAction="#onUndoClick" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="Deshacer">
+                    <graphic>
+                        <SVGPath content="M12.5,8c-2.65,0-5.05,1-6.9,2.6L2,7v9h9l-3.62-3.62c1.39-1.16,3.16-1.88,5.12-1.88c3.54,0,6.55,2.31,7.6,5.5l2.37-0.78C21.08,11.03,17.15,8,12.5,8z" fill="#CCCCCC" scaleX="0.75" scaleY="0.75" />
+                    </graphic>
+                </Button>
+                <Button fx:id="btnCompare" mnemonicParsing="false" style="-fx-background-color: #007ACC; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="Comparar" visible="false">
+                    <graphic>
+                        <SVGPath content="M12,4.5C7,4.5 2.73,7.61 1,12c1.73,4.39 6,7.5 11,7.5s9.27,-3.11 11,-7.5c-1.73,-4.39 -6,-7.5 -11,-7.5zM12,17c-2.76,0 -5,-2.24 -5,-5s2.24,-5 5,-5 5,2.24 5,5 -2.24,5 -5,5zM12,9c-1.66,0 -3,1.34 -3,3s1.34,3 3,3 3,-1.34 3,-3 -1.34,-3 -3,-3z" fill="white" scaleX="0.75" scaleY="0.75" />
+                    </graphic>
+                </Button>
                 <Separator orientation="VERTICAL" style="-fx-padding: 0 5 0 5;" />
-                <Button fx:id="btnResetImage" disable="true" mnemonicParsing="false" onAction="#onResetImageClick" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="✕ Reiniciar Imagen" />
+                <Button fx:id="btnResetImage" disable="true" mnemonicParsing="false" onAction="#onResetImageClick" style="-fx-background-color: #4a4a4a; -fx-text-fill: white; -fx-background-radius: 4; -fx-padding: 6 12 6 12; -fx-cursor: hand; -fx-font-weight: bold;" text="Reiniciar Imagen">
+                    <graphic>
+                        <SVGPath content="M17.65,6.35C16.2,4.9 14.21,4 12,4c-4.42,0 -7.99,3.58 -7.99,8s3.57,8 7.99,8c3.73,0 6.84,-2.55 7.73,-6h-2.08c-0.82,2.33 -3.04,4 -5.65,4 -3.31,0 -6,-2.69 -6,-6s2.69,-6 6,-6c1.66,0 3.14,0.69 4.22,1.78L13,11h7V4l-2.35,2.35z" fill="#CCCCCC" scaleX="0.75" scaleY="0.75" />
+                    </graphic>
+                </Button>
             </ToolBar>
         </VBox>
     </top>
 
     <!-- 2. BARRA LATERAL IZQUIERDA -->
     <left>
-        <ToolBar orientation="VERTICAL" style="-fx-border-color: #222222; -fx-border-width: 0 1 0 0; -fx-padding: 10 5 10 5;" BorderPane.alignment="CENTER">
+        <ToolBar orientation="VERTICAL" style="-fx-border-color: #222222; -fx-border-width: 0 1 0 0; -fx-padding: 10 10 10 10;" BorderPane.alignment="CENTER">
             <fx:define>
                 <ToggleGroup fx:id="toolGroup" />
             </fx:define>
-            <ToggleButton fx:id="btnToolPan" mnemonicParsing="false" selected="true" style="-fx-font-size: 18px; -fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" text="✋" toggleGroup="$toolGroup">
+            <ToggleButton fx:id="btnToolPan" mnemonicParsing="false" selected="true" style="-fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" toggleGroup="$toolGroup">
+                <graphic>
+                    <SVGPath content="M21 9.5a1.5 1.5 0 0 0-1.5-1.5h-.09A1.5 1.5 0 0 0 18 7.16a1.5 1.5 0 0 0-1.5-.66v-.06a1.5 1.5 0 0 0-3 0v5.6L12.1 11a1.5 1.5 0 0 0-2.13.23l-3.32 4.14 5.3 5.3c.77.78 1.83 1.23 2.92 1.23h3.63c2.2 0 4-1.8 4-4v-8.5zm-2 8.5c0 1.1-.9 2-2 2h-3.63c-.53 0-1.04-.2-1.42-.58l-3.88-3.88 1.5-1.87 2.43 1.82V6.5a.5.5 0 0 1 1 0v4.5h1v-3a.5.5 0 0 1 1 0v3h1v-2.5a.5.5 0 0 1 1 0v2.5h1v-1.5a.5.5 0 0 1 1 0v8.5z" fill="#E0E0E0" scaleX="0.8" scaleY="0.8" />
+                </graphic>
                 <tooltip><Tooltip text="Mover lienzo" /></tooltip>
             </ToggleButton>
-            <ToggleButton fx:id="btnToolCrop" mnemonicParsing="false" style="-fx-font-size: 18px; -fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" text="✂" toggleGroup="$toolGroup">
+            <ToggleButton fx:id="btnToolCrop" mnemonicParsing="false" style="-fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" toggleGroup="$toolGroup">
+                <graphic>
+                    <SVGPath content="M17 15h2V7c0-1.1-.9-2-2-2H9v2h8v8zM7 17V1H5v4H1v2h4v10c0 1.1.9 2 2 2h10v4h2v-4h4v-2H7z" fill="#E0E0E0" scaleX="0.8" scaleY="0.8" />
+                </graphic>
                 <tooltip><Tooltip text="Recortar" /></tooltip>
             </ToggleButton>
-            <ToggleButton fx:id="btnToolProfile" mnemonicParsing="false" style="-fx-font-size: 18px; -fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" text="📈" toggleGroup="$toolGroup">
+            <ToggleButton fx:id="btnToolProfile" mnemonicParsing="false" style="-fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" toggleGroup="$toolGroup">
+                <graphic>
+                    <SVGPath content="M3.5 18.5l6-6 4 4L22 6.92 20.59 5.5l-7.09 7.58-4-4L3.5 15.68z M2 22h20v-2H2v2z" fill="#E0E0E0" scaleX="0.8" scaleY="0.8" />
+                </graphic>
                 <tooltip><Tooltip text="Perfil de Línea" /></tooltip>
             </ToggleButton>
         </ToolBar>
