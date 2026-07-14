@@ -84,14 +84,6 @@ class MainController {
     @FXML private lateinit var txtSaturation: TextField
     @FXML private lateinit var txtGamma: TextField
 
-    // --- Controles de Color Avanzado HLS ---
-    @FXML private lateinit var sliderHue: Slider
-    @FXML private lateinit var txtHue: TextField
-    @FXML private lateinit var sliderSaturationHLS: Slider
-    @FXML private lateinit var txtSaturationHLS: TextField
-    @FXML private lateinit var sliderLightness: Slider
-    @FXML private lateinit var txtLightness: TextField
-
     // --- Controles de Zoom ---
     @FXML private lateinit var sliderZoom: Slider
     @FXML private lateinit var txtZoom: TextField
