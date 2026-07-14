@@ -14,7 +14,7 @@ class PDIApplication : Application() {
         val fxmlUrl: URL? = PDIApplication::class.java.getResource("main-view.fxml")
 
         val fxmlLoader = FXMLLoader(fxmlUrl)
-        val scene = Scene(fxmlLoader.load(), 1024.0, 768.0)
+        val scene = Scene(fxmlLoader.load(), 1440.0, 900.0)
         val iconStream = PDIApplication::class.java.getResourceAsStream("icon.png")
 
         stage.icons.add(Image(iconStream))

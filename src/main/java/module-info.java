@@ -4,7 +4,7 @@ module com.example.photolab {
     requires javafx.swing;
     requires java.desktop;
     requires kotlin.stdlib;
-
+    requires opencv;
 
     opens com.example.photolab to javafx.fxml;
     exports com.example.photolab;
