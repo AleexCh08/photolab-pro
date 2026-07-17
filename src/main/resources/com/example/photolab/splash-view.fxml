@@ -7,7 +7,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="300.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: #1E1E1E; -fx-border-color: #7c3bd9; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/21" >
+<VBox alignment="CENTER" prefHeight="300.0" prefWidth="380.0" spacing="15.0" style="-fx-background-color: #1E1E1E; -fx-border-color: #7c3bd9; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/21" >
     <SVGPath content="M20.5 11H17.8L15.9 7.7L18.2 6.3L20.5 11ZM10 18.5V22H14V18.5H10ZM12 6.5C8.96 6.5 6.5 8.96 6.5 12C6.5 15.04 8.96 17.5 12 17.5C15.04 17.5 17.5 15.04 17.5 12C17.5 8.96 15.04 6.5 12 6.5ZM12 15.5C10.07 15.5 8.5 13.93 8.5 12C8.5 10.07 10.07 8.5 12 8.5C13.93 8.5 15.5 10.07 15.5 12C15.5 13.93 13.93 15.5 12 15.5ZM3.5 11L5.8 6.3L8.1 7.7L6.2 11H3.5ZM3.5 13H6.2L8.1 16.3L5.8 17.7L3.5 13ZM15.9 16.3L17.8 13H20.5L18.2 17.7L15.9 16.3ZM10 2H14V5.5H10V2Z" fill="#7c3bd9"
              scaleX="3.0" scaleY="3.0">
         <VBox.margin>
