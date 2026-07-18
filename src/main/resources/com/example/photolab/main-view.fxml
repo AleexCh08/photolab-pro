@@ -181,18 +181,44 @@
                 <TitledPane fx:id="tpAnalysis" style="-fx-font-weight: bold;" text="Análisis e Información">
                     <VBox spacing="15.0" style="-fx-background-color: #383838; -fx-padding: 10;">
 
-                        <!-- ZOOM -->
+                        <!-- REDIMENSIONAR / ESCALADO -->
                         <VBox fx:id="zoomContainer" spacing="10.0" style="-fx-background-color: #4a4a4a; -fx-padding: 12; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6;">
-                            <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 8; -fx-border-color: #007ACC; -fx-border-width: 0 0 0 3;" text="ZOOM / ESCALADO" />
-                            <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                <Label prefWidth="60.0" text="Escala %" />
-                                <Slider fx:id="sliderZoom" max="400.0" min="10.0" value="100.0" HBox.hgrow="ALWAYS" />
-                                <TextField fx:id="txtZoom" alignment="CENTER_RIGHT" prefWidth="55.0" text="100" />
+                            <Label style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-padding: 0 0 0 8; -fx-border-color: #007ACC; -fx-border-width: 0 0 0 3;" text="REDIMENSIONAR / ESCALADO" />
+
+                            <HBox alignment="CENTER" spacing="15.0" style="-fx-background-color: #404040; -fx-padding: 8; -fx-background-radius: 4; -fx-border-color: #4d4d4d; -fx-border-radius: 4;">
+                                <RadioButton fx:id="rbScalePercent" selected="true" text="Porcentaje" />
+                                <RadioButton fx:id="rbScalePixels" text="Píxeles" />
                             </HBox>
+
+                            <StackPane>
+                                <!-- Panel Porcentaje -->
+                                <HBox fx:id="boxScalePercent" alignment="CENTER_LEFT" spacing="10.0">
+                                    <Label prefWidth="60.0" text="Escala %" />
+                                    <Slider fx:id="sliderZoom" max="400.0" min="10.0" value="100.0" HBox.hgrow="ALWAYS" />
+                                    <TextField fx:id="txtZoom" alignment="CENTER_RIGHT" prefWidth="55.0" style="-fx-background-color: #1E1E1E; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-radius: 3;" text="100" />
+                                </HBox>
+
+                                <!-- Panel Píxeles -->
+                                <VBox fx:id="boxScalePixels" managed="false" spacing="10.0" visible="false">
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <Label prefWidth="50.0" text="Ancho:" />
+                                        <TextField fx:id="txtResizeW" alignment="CENTER" style="-fx-background-color: #1E1E1E; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-radius: 3;" HBox.hgrow="ALWAYS" />
+                                        <Label text="px" />
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                        <Label prefWidth="50.0" text="Alto:" />
+                                        <TextField fx:id="txtResizeH" alignment="CENTER" style="-fx-background-color: #1E1E1E; -fx-text-fill: white; -fx-border-color: #555555; -fx-border-radius: 3;" HBox.hgrow="ALWAYS" />
+                                        <Label text="px" />
+                                    </HBox>
+                                    <CheckBox fx:id="chkKeepAspect" selected="true" text="Mantener relación de aspecto" />
+                                </VBox>
+                            </StackPane>
+
                             <Label text="Método de Interpolación:"><VBox.margin><Insets top="5.0" /></VBox.margin></Label>
-                            <ComboBox fx:id="comboInterpolation" maxWidth="Infinity" />
+                            <ComboBox fx:id="comboInterpolation" maxWidth="Infinity" style="-fx-background-color: #1E1E1E; -fx-border-color: #555555; -fx-border-radius: 3; -fx-text-base-color: white;" />
+
                             <HBox alignment="CENTER">
-                                <Button onAction="#onApplyZoomClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 5 15 5 15;" text="Aplicar Zoom">
+                                <Button onAction="#onApplyZoomClick" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 5 15 5 15;" text="Aplicar">
                                     <VBox.margin><Insets top="10.0" /></VBox.margin>
                                 </Button>
                             </HBox>

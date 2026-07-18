@@ -16,21 +16,29 @@ object TransformService {
     // Sección: ESCALADO Y ZOOM
     // Escala la imagen usando el factor y modo especificados.
     fun scaleImage(source: Image, scaleFactor: Double, method: InterpolationMethod): Image {
+        val newWidth = (source.width * scaleFactor).toInt().coerceAtLeast(1)
+        val newHeight = (source.height * scaleFactor).toInt().coerceAtLeast(1)
+        return resizeImage(source, newWidth, newHeight, method)
+    }
+
+    fun resizeImage(source: Image, newWidth: Int, newHeight: Int, method: InterpolationMethod): Image {
         val sourceWidth = source.width.toInt()
         val sourceHeight = source.height.toInt()
 
-        // Calculamos nuevas dimensiones (mínimo 1x1 pixel)
-        val newWidth = (sourceWidth * scaleFactor).toInt().coerceAtLeast(1)
-        val newHeight = (sourceHeight * scaleFactor).toInt().coerceAtLeast(1)
+        val safeWidth = newWidth.coerceAtLeast(1)
+        val safeHeight = newHeight.coerceAtLeast(1)
 
-        val output = WritableImage(newWidth, newHeight)
+        val scaleX = safeWidth / sourceWidth.toDouble()
+        val scaleY = safeHeight / sourceHeight.toDouble()
+
+        val output = WritableImage(safeWidth, safeHeight)
         val reader = source.pixelReader
         val writer = output.pixelWriter
 
-        for (y in 0 until newHeight) {
-            for (x in 0 until newWidth) {
-                val gx = x / scaleFactor
-                val gy = y / scaleFactor
+        for (y in 0 until safeHeight) {
+            for (x in 0 until safeWidth) {
+                val gx = x / scaleX
+                val gy = y / scaleY
 
                 val color = when (method) {
                     InterpolationMethod.NEAREST_NEIGHBOR -> {

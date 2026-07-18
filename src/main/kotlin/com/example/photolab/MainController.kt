@@ -88,6 +88,13 @@ class MainController {
     @FXML private lateinit var sliderZoom: Slider
     @FXML private lateinit var txtZoom: TextField
     @FXML private lateinit var comboInterpolation: ComboBox<TransformService.InterpolationMethod>
+    @FXML private lateinit var rbScalePercent: RadioButton
+    @FXML private lateinit var rbScalePixels: RadioButton
+    @FXML private lateinit var boxScalePercent: HBox
+    @FXML private lateinit var boxScalePixels: VBox
+    @FXML private lateinit var txtResizeW: TextField
+    @FXML private lateinit var txtResizeH: TextField
+    @FXML private lateinit var chkKeepAspect: CheckBox
 
     // --- Controles de Umbralización ---
     @FXML private lateinit var comboThresholdType: ComboBox<ThresholdType>
@@ -377,6 +384,39 @@ class MainController {
             }
         }
         setupTextFieldDoubleNoDecimals(txtZoom, sliderZoom)
+
+        val toggleGroup = ToggleGroup()
+        rbScalePercent.toggleGroup = toggleGroup
+        rbScalePixels.toggleGroup = toggleGroup
+
+        toggleGroup.selectedToggleProperty().addListener { _, _, _ ->
+            val isPixels = rbScalePixels.isSelected
+            boxScalePercent.isVisible = !isPixels
+            boxScalePercent.isManaged = !isPixels
+            boxScalePixels.isVisible = isPixels
+            boxScalePixels.isManaged = isPixels
+
+            if (isPixels && baseImage != null) {
+                txtResizeW.text = baseImage!!.width.toInt().toString()
+                txtResizeH.text = baseImage!!.height.toInt().toString()
+            }
+        }
+
+        txtResizeW.textProperty().addListener { _, _, newValue ->
+            if (txtResizeW.isFocused && chkKeepAspect.isSelected && baseImage != null) {
+                val w = newValue.toIntOrNull() ?: return@addListener
+                val aspect = baseImage!!.height / baseImage!!.width
+                txtResizeH.text = (w * aspect).toInt().toString()
+            }
+        }
+
+        txtResizeH.textProperty().addListener { _, _, newValue ->
+            if (txtResizeH.isFocused && chkKeepAspect.isSelected && baseImage != null) {
+                val h = newValue.toIntOrNull() ?: return@addListener
+                val aspect = baseImage!!.width / baseImage!!.height
+                txtResizeW.text = (h * aspect).toInt().toString()
+            }
+        }
     }
 
     // ============================
@@ -561,6 +601,11 @@ class MainController {
         txtBrightness.text = "0.00"
         txtContrast.text = "1.00"
 
+        txtResizeW.text = "0"
+        txtResizeH.text = "0"
+        sliderZoom.value = 100.0
+        txtZoom.text = "100"
+
         listHistory.items.clear()
         undoStack.clear()
         btnCompare.isVisible = false
@@ -602,18 +647,32 @@ class MainController {
     @FXML
     fun onApplyZoomClick() {
         val currentBase = baseImage ?: return
-        val scalePercentage = sliderZoom.value
-        val scaleFactor = scalePercentage / 100.0
         val method = comboInterpolation.value ?: return
+        val newImage: Image
+        val actionName: String
 
-        if (scaleFactor == 1.0) {
-            updateStatus("Escala 100%, no se han aplicado cambios.")
-            return
+        if (rbScalePercent.isSelected) {
+            val scalePercentage = sliderZoom.value
+            val scaleFactor = scalePercentage / 100.0
+            if (scaleFactor == 1.0) {
+                updateStatus("Escala 100%, no se han aplicado cambios.")
+                return
+            }
+            newImage = TransformService.scaleImage(currentBase, scaleFactor, method)
+            actionName = "Escala ${scalePercentage.toInt()}%"
+        } else {
+            val newW = txtResizeW.text.toIntOrNull() ?: currentBase.width.toInt()
+            val newH = txtResizeH.text.toIntOrNull() ?: currentBase.height.toInt()
+            if (newW == currentBase.width.toInt() && newH == currentBase.height.toInt()) {
+                updateStatus("Las dimensiones ingresadas son idénticas a las originales.")
+                return
+            }
+            newImage = TransformService.resizeImage(currentBase, newW, newH, method)
+            actionName = "Redimensión ${newW}x${newH}"
         }
 
-        val newImage = TransformService.scaleImage(currentBase, scaleFactor, method)
-        updateBaseAfterFilter(newImage, "Zoom ${scalePercentage.toInt()}%")
-        updateStatus("Zoom aplicado. Nueva resolución: ${newImage.width.toInt()}x${newImage.height.toInt()}")
+        updateBaseAfterFilter(newImage, actionName)
+        updateStatus("$actionName aplicado. Nueva resolución: ${newImage.width.toInt()}x${newImage.height.toInt()}")
     }
 
     @FXML fun onRotate180Click() = applyGeometricTransform("Rotación 180°") { TransformService.rotate180(it) }
