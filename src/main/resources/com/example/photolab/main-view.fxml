@@ -129,6 +129,12 @@
                 </graphic>
                 <tooltip><Tooltip text="Recortar" /></tooltip>
             </ToggleButton>
+            <ToggleButton fx:id="btnToolPixelate" mnemonicParsing="false" style="-fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" toggleGroup="$toolGroup">
+                <graphic>
+                    <SVGPath content="M3,3H7V7H3V3M8,3H12V7H8V3M13,3H17V7H13V3M18,3H22V7H18V3M3,8H7V12H3V8M8,8H12V12H8V8M13,8H17V12H13V8M18,8H22V12H18V8M3,13H7V17H3V13M8,13H12V17H8V13M13,13H17V17H13V13M18,13H22V17H18V13M3,18H7V22H3V18M8,18H12V22H8V18M13,18H17V22H13V18M18,18H22V22H18V18Z" fill="#E0E0E0" scaleX="0.8" scaleY="0.8" />
+                </graphic>
+                <tooltip><Tooltip text="Pixelar Área" /></tooltip>
+            </ToggleButton>
             <ToggleButton fx:id="btnToolProfile" mnemonicParsing="false" style="-fx-cursor: hand; -fx-min-width: 44px; -fx-min-height: 44px; -fx-background-radius: 6;" toggleGroup="$toolGroup">
                 <graphic>
                     <SVGPath content="M3.5 18.5l6-6 4 4L22 6.92 20.59 5.5l-7.09 7.58-4-4L3.5 15.68z M2 22h20v-2H2v2z" fill="#E0E0E0" scaleX="0.8" scaleY="0.8" />
@@ -174,6 +180,20 @@
                     <HBox alignment="CENTER" spacing="10.0">
                         <Button onAction="#onApplyCrop" style="-fx-base: #007ACC; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 4; -fx-padding: 6 15 6 15;" text="Recortar" />
                         <Button onAction="#onClearCropSelection" style="-fx-cursor: hand; -fx-background-radius: 4; -fx-padding: 6 15 6 15;" text="Limpiar" />
+                    </HBox>
+                </VBox>
+
+                <!-- CONTENEDOR PIXELADO -->
+                <VBox fx:id="pixelateContainer" managed="false" spacing="12.0" style="-fx-background-color: #4a4a4a; -fx-padding: 15; -fx-background-radius: 6; -fx-border-color: #555555; -fx-border-radius: 6;" visible="false">
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 0 0 0 8; -fx-border-color: #007ACC; -fx-border-width: 0 0 0 3;" text="HERRAMIENTA PIXELAR" />
+                    <Label style="-fx-font-size: 11px;" text="Ajusta el pincel y haz clic en la imagen." textFill="#E0E0E0" wrapText="true" />
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="90.0" text="Tamaño Pincel:" textFill="#FFFFFF" />
+                        <Slider fx:id="sliderBrushSize" max="300.0" min="20.0" value="80.0" HBox.hgrow="ALWAYS" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label prefWidth="90.0" text="Fuerza (Pixel):" textFill="#FFFFFF" />
+                        <Slider fx:id="sliderPixelSize" max="50.0" min="2.0" value="15.0" HBox.hgrow="ALWAYS" />
                     </HBox>
                 </VBox>
 

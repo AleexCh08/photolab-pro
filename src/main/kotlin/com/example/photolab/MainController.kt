@@ -149,6 +149,12 @@ class MainController {
     @FXML private lateinit var btnToolPan: ToggleButton
     @FXML private lateinit var btnToolCrop: ToggleButton
     @FXML private lateinit var btnToolProfile: ToggleButton
+    @FXML private lateinit var btnToolPixelate: ToggleButton
+
+    // Contenedores de Herramientas Interactivas
+    @FXML private lateinit var pixelateContainer: VBox
+    @FXML private lateinit var sliderBrushSize: Slider
+    @FXML private lateinit var sliderPixelSize: Slider
 
     // Panel de TitledPanes
     @FXML private lateinit var tpAnalysis: TitledPane
@@ -180,9 +186,16 @@ class MainController {
         menuResetImage.disableProperty().bind(btnResetImage.disableProperty())
 
         toolGroup.selectedToggleProperty().addListener { _, _, newToggle ->
+            exitCropMode()
+            pixelateContainer.isVisible = false
+            pixelateContainer.isManaged = false
+
+            sliderBrushSize.value = 80.0
+            sliderPixelSize.value = 15.0
+            clearOverlay()
+
             when (newToggle) {
                 btnToolPan -> {
-                    exitCropMode()
                     scrollPane.isPannable = true
                     mainImageView.cursor = Cursor.OPEN_HAND
                 }
@@ -190,8 +203,14 @@ class MainController {
                     scrollPane.isPannable = false
                     onToggleCropMode()
                 }
+                btnToolPixelate -> {
+                    scrollPane.isPannable = false
+                    pixelateContainer.isVisible = true
+                    pixelateContainer.isManaged = true
+                    mainImageView.cursor = Cursor.NONE
+                    updateStatus("Modo Pixelado Activo: Haz clic en el lienzo.")
+                }
                 btnToolProfile -> {
-                    exitCropMode()
                     scrollPane.isPannable = false
                     mainImageView.cursor = Cursor.CROSSHAIR
                     tpAnalysis.isExpanded = true
@@ -220,13 +239,53 @@ class MainController {
     }
 
     private fun setupPixelInspector() {
-        mainImageView.setOnMouseMoved { e ->
+        mainImageView.addEventHandler(MouseEvent.MOUSE_MOVED) { e ->
             updatePixelInfo(e)
+            if (btnToolPixelate.isSelected) drawBrushCursor(e)
         }
-        mainImageView.setOnMouseExited {
+        mainImageView.addEventHandler(MouseEvent.MOUSE_EXITED) { _ ->
             lblPixelInfo.text = ""
             rectPixelColor.isVisible = false
+            if (btnToolPixelate.isSelected) clearOverlay()
         }
+
+        sliderBrushSize.valueProperty().addListener { _, _, _ ->
+            if (btnToolPixelate.isSelected && mainImageView.isHover) {
+                // Forzamos el redibujado en la última posición conocida
+                val fakeEvent = MouseEvent(MouseEvent.MOUSE_MOVED, lastMouseX, lastMouseY, 0.0, 0.0, null, 0, false, false, false, false, false, false, false, false, false, false, null)
+                drawBrushCursor(fakeEvent)
+            }
+        }
+    }
+
+    private fun drawBrushCursor(e: MouseEvent) {
+        val image = mainImageView.image ?: return
+        val bounds = mainImageView.layoutBounds
+
+        lastMouseX = e.x; lastMouseY = e.y
+
+        val imageRatio = image.width / image.height
+        val viewRatio = bounds.width / bounds.height
+        val renderWidth = if (imageRatio > viewRatio) bounds.width else bounds.height * imageRatio
+        val scaleX = renderWidth / image.width
+
+        val brushSize = sliderBrushSize.value
+        val visualDiameter = brushSize * scaleX
+
+        clearOverlay()
+        val gc = overlayCanvas.graphicsContext2D
+        overlayCanvas.width = bounds.width
+        overlayCanvas.height = bounds.height
+
+        gc.stroke = Color.WHITE
+        gc.lineWidth = 1.5
+        gc.strokeOval(e.x - visualDiameter / 2, e.y - visualDiameter / 2, visualDiameter, visualDiameter)
+
+        gc.stroke = Color.BLACK
+        gc.lineWidth = 1.0
+        gc.setLineDashes(4.0)
+        gc.strokeOval(e.x - visualDiameter / 2, e.y - visualDiameter / 2, visualDiameter, visualDiameter)
+        gc.setLineDashes(0.0)
     }
 
     private fun setupCompareControls() {
@@ -1391,25 +1450,60 @@ class MainController {
 
     @FXML
     fun onMainImageClick(event: MouseEvent) {
-        if (!btnToolProfile.isSelected || mainImageView.image == null) return
+        val image = mainImageView.image ?: return
 
-        val image = mainImageView.image
-        val bounds = mainImageView.boundsInLocal
+        // Extraer coordenadas exactas eliminando el desfase del formato (Letterboxing)
+        val coords = getExactImageCoordinates(event.x, event.y) ?: return
 
-        val clickX = event.x
-        val clickY = event.y
-
-        val scaleX = image.width / bounds.width
-        val scaleY = image.height / bounds.height
-
-        val pixelX = (clickX * scaleX).toInt()
-        val pixelY = (clickY * scaleY).toInt()
-
-        if (pixelX in 0 until image.width.toInt() && pixelY in 0 until image.height.toInt()) {
-            currentProfileRow = pixelY
-            drawProfileLine(pixelY, clickY)
-            updateLineProfileChart(pixelY)
+        // --- LÓGICA PERFIL DE LÍNEA ---
+        if (btnToolProfile.isSelected) {
+            currentProfileRow = coords.second
+            drawProfileLine(coords.second, event.y)
+            updateLineProfileChart(coords.second)
         }
+
+        // --- LÓGICA PIXELADO INTERACTIVO ---
+        if (btnToolPixelate.isSelected) {
+            val brushSize = sliderBrushSize.value.toInt()
+            val pixelSize = sliderPixelSize.value.toInt()
+
+            val newImage = PrivacyService.pixelateArea(image, coords.first, coords.second, brushSize, pixelSize)
+            updateBaseAfterFilter(newImage, "Pincel de pixelado")
+            updateStatus("Área pixelada aplicada.")
+        }
+    }
+
+    // Helper matemático para mapear el mouse a la matriz de la imagen ignorando bandas negras
+    private fun getExactImageCoordinates(mouseX: Double, mouseY: Double): Pair<Int, Int>? {
+        val image = mainImageView.image ?: return null
+        val bounds = mainImageView.layoutBounds
+
+        val imageRatio = image.width / image.height
+        val viewRatio = bounds.width / bounds.height
+
+        var renderWidth = bounds.width
+        var renderHeight = bounds.height
+        var xOffset = 0.0
+        var yOffset = 0.0
+
+        if (imageRatio > viewRatio) {
+            renderHeight = bounds.width / imageRatio
+            yOffset = (bounds.height - renderHeight) / 2
+        } else {
+            renderWidth = bounds.height * imageRatio
+            xOffset = (bounds.width - renderWidth) / 2
+        }
+
+        val adjustedX = mouseX - xOffset
+        val adjustedY = mouseY - yOffset
+
+        // ¿El clic fue fuera de la imagen real (en las franjas vacías del fondo)?
+        if (adjustedX !in 0.0..renderWidth || adjustedY < 0 || adjustedY > renderHeight) return null
+
+        val pixelX = (adjustedX * (image.width / renderWidth)).toInt()
+        val pixelY = (adjustedY * (image.height / renderHeight)).toInt()
+
+        return Pair(pixelX, pixelY)
     }
 
     private fun drawProfileLine(rowY: Int, preciseY: Double? = null) {
@@ -1460,12 +1554,10 @@ class MainController {
             }
         }
 
-        mainImageView.setOnMouseMoved { e ->
-            updatePixelInfo(e)
-
+        mainImageView.addEventHandler(MouseEvent.MOUSE_MOVED) { e ->
             if (!isCropMode || rbCropPan.isSelected || currentVisualRect == null) {
-                if (!isCropMode) mainImageView.cursor = Cursor.DEFAULT
-                return@setOnMouseMoved
+                if (isCropMode && !rbCropPan.isSelected) mainImageView.cursor = Cursor.CROSSHAIR
+                return@addEventHandler
             }
 
             val handle = getHandleForPoint(e.x, e.y, currentVisualRect!!)
